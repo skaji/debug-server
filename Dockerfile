@@ -1,4 +1,5 @@
 FROM golang:1.15
+LABEL org.opencontainers.image.source https://github.com/skaji/debug-server
 
 WORKDIR /go/src/github.com/skaji/debug-server
 ENV DEBIAN_FRONTEND noninteractive
