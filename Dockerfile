@@ -11,7 +11,7 @@ RUN set -eux; \
   curl -fsSL -o /sbin/tini https://github.com/krallin/tini/releases/download/v0.19.0/tini; \
   chmod +x /sbin/tini; \
   apt-get update; \
-  apt-get install -y net-tools; \
+  apt-get install -y net-tools dnsutils; \
   :
 
 EXPOSE 8080
