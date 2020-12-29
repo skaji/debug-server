@@ -23,7 +23,7 @@ func main() {
 			Handler: &Handler{ExpectHeader: expectHeader},
 			Addr:    ":8080",
 		},
-		WaitBeforeShutdown: 5 * time.Second,
+		WaitBeforeStop: 5 * time.Second,
 	}
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()

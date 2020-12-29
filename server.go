@@ -24,8 +24,8 @@ func (s *state) setClosing() {
 }
 
 type Server struct {
-	Server             *http.Server
-	WaitBeforeShutdown time.Duration
+	Server         *http.Server
+	WaitBeforeStop time.Duration
 }
 
 func (s *Server) Run(ctx0 context.Context) error {
@@ -40,30 +40,30 @@ func (s *Server) Run(ctx0 context.Context) error {
 
 	ctx1, cancel1 := context.WithCancel(ctx0)
 	defer cancel1()
-	done := make(chan error, 1)
+	shutdown := make(chan error, 1)
 	go func() {
-		defer close(done)
+		defer close(shutdown)
 		<-ctx1.Done()
 		select {
 		case <-ctx0.Done():
 		default:
 			return
 		}
-		st.setClosing()
-		if wait := s.WaitBeforeShutdown; wait != 0 {
+		if wait := s.WaitBeforeStop; wait != 0 {
+			st.setClosing()
 			log.Printf("wait %s before stopping...", wait.String())
 			time.Sleep(wait)
 		}
 		ctx2, cancel2 := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel2()
 		if err := s.Server.Shutdown(ctx2); err != nil {
-			done <- err
+			shutdown <- err
 		}
 	}()
 
 	err1 := s.Server.ListenAndServe()
 	cancel1()
-	err2 := <-done
+	err2 := <-shutdown
 	if err1 != nil && !errors.Is(err1, http.ErrServerClosed) {
 		return err1
 	}
