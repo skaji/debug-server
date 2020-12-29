@@ -11,6 +11,8 @@ import (
 	"time"
 )
 
+var version string = "v0.0.0"
+
 func main() {
 	expectHeader := os.Getenv("EXPECT_HEADER")
 	if expectHeader == "" {
@@ -33,7 +35,7 @@ func main() {
 		log.Printf("catch signal %s", <-quit)
 		cancel()
 	}()
-	log.Println("start")
+	log.Printf("start debug-server %s", version)
 	if err := server.Run(ctx); err != nil {
 		log.Fatal(err)
 	}

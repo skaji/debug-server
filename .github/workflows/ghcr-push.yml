@@ -19,5 +19,5 @@ jobs:
       - name: docker build and push
         run: |
           IMAGE_TAG=${GITHUB_REF##*/}
-          docker build -t ghcr.io/${{ github.repository }}:$IMAGE_TAG .
+          docker build --build-arg VERSION=$IMAGE_TAG -t ghcr.io/${{ github.repository }}:$IMAGE_TAG .
           docker push ghcr.io/${{ github.repository }}:$IMAGE_TAG

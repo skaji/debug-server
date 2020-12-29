@@ -1,5 +1,6 @@
 FROM golang:1.15
 LABEL org.opencontainers.image.source https://github.com/skaji/debug-server
+ARG VERSION=v0.0.1
 
 WORKDIR /go/src/github.com/skaji/debug-server
 ENV DEBIAN_FRONTEND noninteractive
@@ -7,7 +8,7 @@ ENV DEBIAN_FRONTEND noninteractive
 COPY go.* *.go ./
 
 RUN set -eux; \
-  go build; \
+  go build -ldflags "-X main.version=$VERSION"; \
   curl -fsSL -o /sbin/tini https://github.com/krallin/tini/releases/download/v0.19.0/tini; \
   chmod +x /sbin/tini; \
   apt-get update; \
