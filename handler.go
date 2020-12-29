@@ -15,7 +15,6 @@ type Handler struct {
 
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.Header.Get(h.ExpectHeader) == "" {
-		w.Header().Set("Connection", "close")
 		w.Write([]byte("OK\n"))
 		return
 	}
