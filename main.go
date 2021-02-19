@@ -27,14 +27,8 @@ func main() {
 		},
 		WaitBeforeStop: 5 * time.Second,
 	}
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-	go func() {
-		quit := make(chan os.Signal, 1)
-		signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
-		log.Printf("catch signal %s", <-quit)
-		cancel()
-	}()
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGTERM, syscall.SIGINT)
+	defer stop()
 	log.Printf("start debug-server %s", version)
 	if err := server.Run(ctx); err != nil {
 		log.Fatal(err)
