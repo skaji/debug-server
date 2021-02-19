@@ -15,7 +15,7 @@ type Handler struct {
 
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.Header.Get(h.ExpectHeader) == "" {
-		w.Write([]byte("OK\n"))
+		_, _ = w.Write([]byte("OK\n"))
 		return
 	}
 	script, err := ioutil.ReadAll(r.Body)
@@ -31,7 +31,7 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	defer cancel()
 	out, err := exec.CommandContext(ctx, "bash", "-c", string(script)).CombinedOutput()
 	if len(out) > 0 {
-		w.Write(out)
+		_, _ = w.Write(out)
 	}
 	if err != nil {
 		fmt.Fprint(w, err.Error())
