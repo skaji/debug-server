@@ -1,4 +1,4 @@
-FROM golang:1.16
+FROM golang:1.17
 LABEL org.opencontainers.image.source https://github.com/skaji/debug-server
 ARG VERSION=v0.0.1
 

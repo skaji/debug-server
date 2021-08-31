@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-var version string = "v0.0.0"
+var version = "v0.0.0"
 
 func main() {
 	expectHeader := os.Getenv("EXPECT_HEADER")
