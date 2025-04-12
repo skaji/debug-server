@@ -17,6 +17,7 @@ apt-get install -y \
   net-tools \
   perl \
   procps \
+  redis-tools \
   tzdata \
   ;
 apt-get clean
