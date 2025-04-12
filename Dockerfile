@@ -1,20 +1,38 @@
-FROM golang:1.17
-LABEL org.opencontainers.image.source https://github.com/skaji/debug-server
-ARG VERSION=v0.0.1
+FROM golang:latest AS builder
 
-WORKDIR /go/src/github.com/skaji/debug-server
+WORKDIR /app
+RUN --mount=target=. go build -o /debug-server
 
-COPY go.* *.go ./
+FROM ubuntu:24.04
 
-RUN set -eux; \
-  go build -ldflags "-X main.version=$VERSION"; \
-  curl -fsSL -o /sbin/tini https://github.com/krallin/tini/releases/download/v0.19.0/tini; \
-  chmod +x /sbin/tini; \
-  export DEBIAN_FRONTEND=noninteractive; \
-  apt-get update; \
-  apt-get install -y net-tools dnsutils; \
-  :
+ENV DEBIAN_FRONTEND=noninteractive
 
+RUN <<EOF bash
+set -eux
+
+apt-get update
+apt-get install -y \
+  curl \
+  dnsutils \
+  net-tools \
+  perl \
+  procps \
+  tzdata \
+  ;
+apt-get clean
+rm -rf /var/lib/apt/lists/*
+
+curl -fsSL -o /sbin/tini https://github.com/krallin/tini/releases/download/v0.19.0/tini
+chmod +x /sbin/tini
+
+echo Asia/Tokyo > /etc/timezone
+rm -f /etc/localtime
+dpkg-reconfigure -f noninteractive tzdata
+EOF
+
+COPY --from=builder /debug-server /debug-server
+
+WORKDIR /root
 EXPOSE 8080
 ENTRYPOINT ["/sbin/tini", "--"]
-CMD ["/go/src/github.com/skaji/debug-server/debug-server"]
+CMD ["/debug-server"]
