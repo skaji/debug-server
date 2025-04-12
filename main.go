@@ -57,6 +57,11 @@ func main() {
 type Handler struct{}
 
 func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path == "/health" {
+		_, _ = w.Write([]byte("OK\n"))
+		return
+	}
+
 	script, err := io.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, err.Error(), 500)
